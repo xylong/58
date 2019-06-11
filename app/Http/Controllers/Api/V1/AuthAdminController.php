@@ -1,42 +1,46 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class AuthAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:admin', ['except' => ['login']]);
     }
 
     public function login()
     {
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        if (! $token = auth('admin')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
+//            return $this->response->errorUnauthorized();
         }
 
         return $this->respondWithToken($token);
+//        return $this->response->array(['token' => $token]);
     }
 
     public function me()
     {
-        return response()->json(auth('api')->user());
+//        return response()->json(auth('admin')->user());
+        return auth('admin')->user();
     }
 
     public function logout()
     {
-        auth('api')->logout();
+        auth('admin')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        return $this->respondWithToken(auth('admin')->refresh());
     }
 
     protected function respondWithToken($token)
@@ -44,7 +48,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('admin')->factory()->getTTL() * 60
         ]);
     }
 }

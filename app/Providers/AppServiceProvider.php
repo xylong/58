@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        \API::error(function (\Illuminate\Auth\AuthenticationException $exception) {
+            abort(401, 'Unauthenticated');
+        });
     }
 
     /**

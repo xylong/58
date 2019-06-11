@@ -26,6 +26,27 @@ $api->version('v1', [
         $api->post('refresh', 'AuthController@refresh');
         $api->post('me', 'AuthController@me')->middleware('auth:api');
     });
+
+    $api->group([
+        'prefix' => 'admin',
+    ], function ($api) {
+        $api->post('login', 'AuthAdminController@login');
+        $api->post('logout', 'AuthAdminController@logout');
+        $api->post('refresh', 'AuthAdminController@refresh');
+        $api->post('me', 'AuthAdminController@me')->middleware('auth:admin');
+    });
+
+    $api->group([
+        'middleware' => 'auth:api'
+    ], function ($api) {
+        $api->get('/apple', 'TestController@apple')->name('apple');
+    });
+
+    $api->group([
+        'middleware' => 'auth:admin'
+    ], function ($api) {
+        $api->get('/banana', 'TestController@banana')->name('banana');
+    });
 });
 
 //Route::group([
